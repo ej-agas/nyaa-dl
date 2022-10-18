@@ -1,6 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -17,7 +14,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "nyaa-dl",
 	Short: "nyaa-dl",
-	Long:  `v0.0.1`,
+	Long:  `v0.1.0`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

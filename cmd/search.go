@@ -1,6 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -23,10 +20,13 @@ var searchCmd = &cobra.Command{
 }
 
 func run(cmd *cobra.Command, args []string) {
+	if len(args) == 0 {
+		cmd.Help()
+		os.Exit(0)
+	}
+
 	nyaa := http.CreateNyaa("https://nyaa.si")
-
 	query := domain.NewQuery(domain.NoFilter, domain.AllCategories, args[0])
-
 	res, err := nyaa.Search(*query)
 
 	if err != nil {
@@ -78,13 +78,32 @@ func renderView(items domain.Items) {
 func init() {
 	rootCmd.AddCommand(searchCmd)
 
-	// Here you will define your flags and configuration settings.
+	searchCmd.Flags().String(
+		"filter",
+		"",
+		`Available Filters:
+no-filter (Default)
+no-remakes
+trusted-only
+	`)
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// searchCmd.PersistentFlags().String("foo", "", "A help for foo")
+	searchCmd.Flags().String(
+		"sort",
+		"",
+		`Sort By:
+title
+size
+seeders
+leechers
+downloads
+date (Default)
+	`)
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// searchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	searchCmd.Flags().String(
+		"order",
+		"",
+		`Order By:
+desc (Default)
+asc 
+	`)
 }
