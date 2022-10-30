@@ -6,14 +6,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFilterFromString(t *testing.T) {
-	match, ok := FilterFromString("some-string", Filters)
+func TestFilterStringFunc(t *testing.T) {
+	filter := filter{value: "0"}
 
-	assert.Equal(t, "", match)
-	assert.Equal(t, false, ok)
+	assert.Equal(t, "0", filter.String())
+}
 
-	match2, ok2 := FilterFromString("no-filter", Filters)
+func TestNewFilter(t *testing.T) {
+	badMatch, notOk := NewFilter("some-string")
 
-	assert.Equal(t, NoFilter, match2)
-	assert.Equal(t, true, ok2)
+	assert.Equal(t, filter{value: ""}, badMatch)
+	assert.Equal(t, false, notOk)
+
+	match, ok := NewFilter("no-filter")
+
+	assert.Equal(t, filter{value: "0"}, match)
+	assert.Equal(t, true, ok)
+}
+
+func TestNoFilter(t *testing.T) {
+	noFilter := NoFilter()
+
+	assert.Equal(t, filter{value: "0"}, noFilter)
 }

@@ -2,22 +2,26 @@ package domain
 
 import "strings"
 
-type Filter = string
-
-const (
-	NoFilter    Filter = "0"
-	NoRemakes   Filter = "1"
-	TrustedOnly Filter = "2"
-)
-
-var Filters = map[string]Filter{
-	"no-filter":    NoFilter,
-	"no-remakes":   NoRemakes,
-	"trusted-only": TrustedOnly,
+type filter struct {
+	value string
 }
 
-func FilterFromString(s string, f map[string]Filter) (Filter, bool) {
-	match, ok := f[strings.ToLower(s)]
+func (f filter) String() string {
+	return f.value
+}
+
+var filters = map[string]filter{
+	"no-filter":    {value: "0"},
+	"no-remakes":   {value: "1"},
+	"trusted-only": {value: "2"},
+}
+
+func NewFilter(s string) (filter, bool) {
+	match, ok := filters[strings.ToLower(s)]
 
 	return match, ok
+}
+
+func NoFilter() filter {
+	return filter{value: "0"}
 }

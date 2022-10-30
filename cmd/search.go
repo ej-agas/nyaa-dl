@@ -19,6 +19,10 @@ var searchCmd = &cobra.Command{
 	Run:   run,
 }
 
+var sort *string
+var order *string
+var filter *string
+
 func run(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
 		cmd.Help()
@@ -26,7 +30,7 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	nyaa := http.CreateNyaa("https://nyaa.si")
-	query := domain.NewQuery(domain.NoFilter, domain.AllCategories, args[0])
+	query := domain.NewQuery(domain.NoFilter(), domain.AllCategories, args[0])
 	res, err := nyaa.Search(*query)
 
 	if err != nil {
@@ -35,6 +39,11 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	items := http.SerializeToItems(res)
+
+	if *sort != "" {
+		items.Sort(sort, order)
+	}
+
 	renderView(items)
 }
 
@@ -78,7 +87,7 @@ func renderView(items domain.Items) {
 func init() {
 	rootCmd.AddCommand(searchCmd)
 
-	searchCmd.Flags().String(
+	filter = searchCmd.Flags().String(
 		"filter",
 		"",
 		`Available Filters:
@@ -87,11 +96,10 @@ no-remakes
 trusted-only
 	`)
 
-	searchCmd.Flags().String(
+	sort = searchCmd.Flags().String(
 		"sort",
 		"",
 		`Sort By:
-title
 size
 seeders
 leechers
@@ -99,7 +107,7 @@ downloads
 date (Default)
 	`)
 
-	searchCmd.Flags().String(
+	order = searchCmd.Flags().String(
 		"order",
 		"",
 		`Order By:

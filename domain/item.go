@@ -4,11 +4,7 @@ import (
 	"time"
 )
 
-type Items struct {
-	Items []Item `xml:"channel>item"`
-}
-
-type Item struct {
+type item struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
 	Url         string `xml:"guid"`
@@ -25,7 +21,7 @@ type Item struct {
 	Description string `xml:"description"`
 }
 
-func (i *Item) PublishDateLocalTz() (string, error) {
+func (i *item) PublishDateLocalTz() (string, error) {
 	time, err := time.Parse("Mon, 02 Jan 2006 15:04:05 -0000", i.PublishDate)
 
 	if err != nil {
@@ -33,4 +29,8 @@ func (i *Item) PublishDateLocalTz() (string, error) {
 	}
 
 	return time.Local().Local().Format("Mon, 02 Jan 2006, 3:04:05 AM MST"), nil
+}
+
+func (i *item) SizeInBytes() (float64, error) {
+	return ConvertToBytes(i.Size)
 }
