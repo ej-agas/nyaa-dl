@@ -1,45 +1,63 @@
 package domain
 
-import (
-	"sort"
-)
+import "time"
 
 type Items struct {
 	Items []item `xml:"channel>item"`
 }
 
-func (i *Items) Sort(sortBy *string, order *string) {
-	if *sortBy == "size" {
-		sortBySize(i.Items, order)
-	}
-
-	switch *sortBy {
-	case "size":
-		sortBySize(i.Items, order)
-	case "seeders":
-		sortBySeeders(i.Items, order)
-	}
+func (i Items) Len() int {
+	return len(i.Items)
 }
 
-func sortBySize(i []item, order *string) {
-	sort.Slice(i, func(a, b int) bool {
-		aSize, _ := i[a].SizeInBytes()
-		bSize, _ := i[b].SizeInBytes()
-
-		if *order == "asc" {
-			return aSize < bSize
-		}
-
-		return aSize > bSize
-	})
+func (it Items) Swap(i, j int) {
+	it.Items[i], it.Items[j] = it.Items[j], it.Items[i]
 }
 
-func sortBySeeders(i []item, order *string) {
-	sort.Slice(i, func(a, b int) bool {
-		if *order == "asc" {
-			return i[a].Seeders < i[b].Seeders
-		}
+type SortBySize struct {
+	Items
+}
 
-		return i[a].Seeders > i[b].Seeders
-	})
+func (s SortBySize) Less(i, j int) bool {
+	iSize, _ := s.Items.Items[i].SizeInBytes()
+	jSize, _ := s.Items.Items[j].SizeInBytes()
+
+	return iSize > jSize
+}
+
+type SortBySeeders struct {
+	Items
+}
+
+func (s SortBySeeders) Less(i, j int) bool {
+	return s.Items.Items[i].Seeders > s.Items.Items[j].Seeders
+}
+
+type SortByLeechers struct {
+	Items
+}
+
+func (s SortByLeechers) Less(i, j int) bool {
+	return s.Items.Items[i].Leechers > s.Items.Items[j].Leechers
+}
+
+type SortByDownloads struct {
+	Items
+}
+
+func (s SortByDownloads) Less(i, j int) bool {
+	return s.Items.Items[i].Downloads > s.Items.Items[j].Downloads
+}
+
+type SortByDate struct {
+	Items
+}
+
+func (s SortByDate) Less(i, j int) bool {
+	dateTimeFormat := "Mon, 02 Jan 2006 15:04:05 -0000"
+
+	iTime, _ := time.Parse(dateTimeFormat, s.Items.Items[i].PublishDate)
+	jTime, _ := time.Parse(dateTimeFormat, s.Items.Items[j].PublishDate)
+
+	return iTime.After(jTime)
 }

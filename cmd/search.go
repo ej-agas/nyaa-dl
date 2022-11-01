@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"sort"
+	"strings"
 
 	"github.com/ej-agas/nyaa-dl/domain"
 	"github.com/ej-agas/nyaa-dl/http"
@@ -11,7 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// searchCmd represents the search command
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search Item",
@@ -19,9 +20,11 @@ var searchCmd = &cobra.Command{
 	Run:   run,
 }
 
-var sort *string
-var order *string
-var filter *string
+var (
+	sortInput  *string
+	orderInput *string
+	filter     *string
+)
 
 func run(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
@@ -40,11 +43,48 @@ func run(cmd *cobra.Command, args []string) {
 
 	items := http.SerializeToItems(res)
 
-	if *sort != "" {
-		items.Sort(sort, order)
-	}
-
+	sortItems(items)
 	renderView(items)
+}
+
+func sortItems(items domain.Items) {
+	switch strings.ToLower(*sortInput) {
+	case "size":
+		if strings.ToLower(*orderInput) == "asc" {
+			sort.Sort(sort.Reverse(domain.SortBySize{Items: items}))
+			break
+		}
+
+		sort.Sort(domain.SortBySize{Items: items})
+	case "seeders":
+		if strings.ToLower(*orderInput) == "asc" {
+			sort.Sort(sort.Reverse(domain.SortBySeeders{Items: items}))
+			break
+		}
+
+		sort.Sort(domain.SortBySeeders{Items: items})
+	case "leechers":
+		if strings.ToLower(*orderInput) == "asc" {
+			sort.Sort(sort.Reverse(domain.SortByLeechers{Items: items}))
+			break
+		}
+
+		sort.Sort(domain.SortByLeechers{Items: items})
+	case "downloads":
+		if strings.ToLower(*orderInput) == "asc" {
+			sort.Sort(sort.Reverse(domain.SortByDownloads{Items: items}))
+			break
+		}
+
+		sort.Sort(domain.SortByDownloads{Items: items})
+	case "date":
+		if strings.ToLower(*orderInput) == "asc" {
+			sort.Sort(sort.Reverse(domain.SortByDate{Items: items}))
+			break
+		}
+
+		sort.Sort(domain.SortByDate{Items: items})
+	}
 }
 
 func renderView(items domain.Items) {
@@ -96,7 +136,7 @@ no-remakes
 trusted-only
 	`)
 
-	sort = searchCmd.Flags().String(
+	sortInput = searchCmd.Flags().String(
 		"sort",
 		"",
 		`Sort By:
@@ -107,7 +147,7 @@ downloads
 date (Default)
 	`)
 
-	order = searchCmd.Flags().String(
+	orderInput = searchCmd.Flags().String(
 		"order",
 		"",
 		`Order By:
