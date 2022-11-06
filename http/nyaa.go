@@ -37,6 +37,8 @@ func (n *Nyaa) Search(q domain.Query) ([]byte, error) {
 func handleResponse(r *http.Response) ([]byte, error) {
 	bodyBytes, err := io.ReadAll(r.Body)
 
+	defer r.Body.Close()
+
 	if err != nil {
 		return bodyBytes, err
 	}

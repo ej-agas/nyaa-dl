@@ -3,8 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"sort"
-	"strings"
 
 	"github.com/ej-agas/nyaa-dl/domain"
 	"github.com/ej-agas/nyaa-dl/http"
@@ -43,48 +41,8 @@ func run(cmd *cobra.Command, args []string) {
 
 	items := http.SerializeToItems(res)
 
-	sortItems(items)
+	domain.SortItems(items, *sortInput, *orderInput)
 	renderView(items)
-}
-
-func sortItems(items domain.Items) {
-	switch strings.ToLower(*sortInput) {
-	case "size":
-		if strings.ToLower(*orderInput) == "asc" {
-			sort.Sort(sort.Reverse(domain.SortBySize{Items: items}))
-			break
-		}
-
-		sort.Sort(domain.SortBySize{Items: items})
-	case "seeders":
-		if strings.ToLower(*orderInput) == "asc" {
-			sort.Sort(sort.Reverse(domain.SortBySeeders{Items: items}))
-			break
-		}
-
-		sort.Sort(domain.SortBySeeders{Items: items})
-	case "leechers":
-		if strings.ToLower(*orderInput) == "asc" {
-			sort.Sort(sort.Reverse(domain.SortByLeechers{Items: items}))
-			break
-		}
-
-		sort.Sort(domain.SortByLeechers{Items: items})
-	case "downloads":
-		if strings.ToLower(*orderInput) == "asc" {
-			sort.Sort(sort.Reverse(domain.SortByDownloads{Items: items}))
-			break
-		}
-
-		sort.Sort(domain.SortByDownloads{Items: items})
-	case "date":
-		if strings.ToLower(*orderInput) == "asc" {
-			sort.Sort(sort.Reverse(domain.SortByDate{Items: items}))
-			break
-		}
-
-		sort.Sort(domain.SortByDate{Items: items})
-	}
 }
 
 func renderView(items domain.Items) {
@@ -95,6 +53,7 @@ func renderView(items domain.Items) {
 	tw.Style().Options.SeparateRows = true
 	tw.AppendHeader(
 		table.Row{
+			"ID",
 			"Title",
 			"Size",
 			"Seeders",
@@ -105,19 +64,16 @@ func renderView(items domain.Items) {
 
 	for i := 0; i < itemsCount; i++ {
 		item := items.Items[i]
-		time, err := item.PublishDateLocalTz()
-		if err != nil {
-			fmt.Println(err)
-		}
 
 		tw.AppendRow(
 			table.Row{
+				item.Link,
 				text.FgGreen.Sprint(item.Title),
 				item.Size,
 				text.FgHiGreen.Sprint(item.Seeders),
 				text.FgRed.Sprint(item.Leechers),
 				item.Downloads,
-				time,
+				item.PublishDateLocalTz(),
 			})
 	}
 

@@ -21,14 +21,14 @@ type item struct {
 	Description string `xml:"description"`
 }
 
-func (i *item) PublishDateLocalTz() (string, error) {
+func (i *item) PublishDateLocalTz() string {
 	time, err := time.Parse("Mon, 02 Jan 2006 15:04:05 -0000", i.PublishDate)
 
 	if err != nil {
-		return "", err
+		return ""
 	}
 
-	return time.Local().Local().Format("Mon, 02 Jan 2006, 3:04:05 AM MST"), nil
+	return time.Local().Local().Format("Mon, 02 Jan 2006, 3:04:05 AM MST")
 }
 
 func (i *item) SizeInBytes() (float64, error) {
