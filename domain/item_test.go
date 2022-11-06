@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +27,9 @@ func TestItem(t *testing.T) {
 		Description: "<a href=\"https://nyaa.si/view/1599201\">#1599201 | [SubsPlease] Bocchi the Rock! - 05 (1080p) [192004DE].mkv</a> | 1.3 GiB | Anime - English-translated | ef0d35adc2c45d6c226de092249eab36c43e5630",
 	}
 
-	assert.Equal(t, "Sun, 06 Nov 2022, 12:33:33 AM PST", item.PublishDateLocalTz())
+	expected, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 -0000", item.PublishDate)
+
+	assert.Equal(t, expected.Local().Local().Format("Mon, 02 Jan 2006, 3:04:05 AM MST"), item.PublishDateLocalTz())
 
 	size, err := item.SizeInBytes()
 
