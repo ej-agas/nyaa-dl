@@ -31,7 +31,9 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	nyaa := http.CreateNyaa("https://nyaa.si")
-	query := domain.NewQuery(domain.NoFilter(), domain.AllCategories, args[0])
+
+	filter, _ := domain.NewFilter(*filter)
+	query := domain.NewQuery(filter, domain.AllCategories, args[0])
 	res, err := nyaa.Search(*query)
 
 	if err != nil {
@@ -65,10 +67,18 @@ func renderView(items domain.ItemCollection) {
 	for i := 0; i < itemsCount; i++ {
 		item := items.Items[i]
 
+		if item.Trusted == "Yes" {
+			item.Title = text.FgGreen.Sprint(item.Title)
+		}
+
+		if item.Remake == "Yes" {
+			item.Title = text.FgRed.Sprint(item.Title)
+		}
+
 		tw.AppendRow(
 			table.Row{
 				item.Id(),
-				text.FgGreen.Sprint(item.Title),
+				item.Title,
 				item.Size,
 				text.FgHiGreen.Sprint(item.Seeders),
 				text.FgRed.Sprint(item.Leechers),
