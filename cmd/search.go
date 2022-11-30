@@ -15,7 +15,7 @@ var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search Item",
 	Long:  `Search for Anime, Audio, Live Action, Pictures, Software`,
-	Run:   run,
+	Run:   search,
 }
 
 var (
@@ -24,10 +24,10 @@ var (
 	filter     *string
 )
 
-func run(cmd *cobra.Command, args []string) {
+func search(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
 		cmd.Help()
-		os.Exit(0)
+		return
 	}
 
 	nyaa := http.CreateNyaa("https://nyaa.si")
