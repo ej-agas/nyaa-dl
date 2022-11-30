@@ -1,9 +1,14 @@
 package domain
 
 type SortByLeechers struct {
-	Items
+	ItemCollection
+}
+
+func (s SortByLeechers) SetItemCollection(i ItemCollection) Sorter {
+	s.ItemCollection = i
+	return s
 }
 
 func (s SortByLeechers) Less(i, j int) bool {
-	return s.Items.Items[i].Leechers > s.Items.Items[j].Leechers
+	return s.ItemCollection.Items[i].Leechers > s.ItemCollection.Items[j].Leechers
 }

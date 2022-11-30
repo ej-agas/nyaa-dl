@@ -38,4 +38,5 @@ func TestItem(t *testing.T) {
 	}
 
 	assert.Equal(t, 1.3958643712e+09, size)
+	assert.Equal(t, "1599201", item.Id())
 }

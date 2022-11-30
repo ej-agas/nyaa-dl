@@ -1,9 +1,14 @@
 package domain
 
 type SortByDownloads struct {
-	Items
+	ItemCollection
+}
+
+func (s SortByDownloads) SetItemCollection(i ItemCollection) Sorter {
+	s.ItemCollection = i
+	return s
 }
 
 func (s SortByDownloads) Less(i, j int) bool {
-	return s.Items.Items[i].Downloads > s.Items.Items[j].Downloads
+	return s.ItemCollection.Items[i].Downloads > s.ItemCollection.Items[j].Downloads
 }

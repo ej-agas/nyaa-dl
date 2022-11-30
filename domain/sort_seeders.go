@@ -1,9 +1,14 @@
 package domain
 
 type SortBySeeders struct {
-	Items
+	ItemCollection
+}
+
+func (s SortBySeeders) SetItemCollection(i ItemCollection) Sorter {
+	s.ItemCollection = i
+	return s
 }
 
 func (s SortBySeeders) Less(i, j int) bool {
-	return s.Items.Items[i].Seeders > s.Items.Items[j].Seeders
+	return s.ItemCollection.Items[i].Seeders > s.ItemCollection.Items[j].Seeders
 }

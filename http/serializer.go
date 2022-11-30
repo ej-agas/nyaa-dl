@@ -6,8 +6,8 @@ import (
 	"github.com/ej-agas/nyaa-dl/domain"
 )
 
-func SerializeToItems(b []byte) domain.Items {
-	var items domain.Items
+func SerializeToItems(b []byte) domain.ItemCollection {
+	var items domain.ItemCollection
 
 	xml.Unmarshal(b, &items)
 

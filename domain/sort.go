@@ -5,44 +5,53 @@ import (
 	"strings"
 )
 
-func SortItems(items Items, sortBy string, orderBy string) {
+type Sorter interface {
+	sort.Interface
+	SetItemCollection(ItemCollection) Sorter
+}
+
+func SortItems(items ItemCollection, sortBy string, orderBy string) {
 	switch strings.ToLower(sortBy) {
 	case "size":
 		if strings.ToLower(orderBy) == "asc" {
-			sortDesc(SortBySize{Items: items})
+			sortDesc(SortBySize{items})
 			break
 		}
 
-		sort.Sort(SortBySize{Items: items})
+		sortAsc(SortBySize{items})
 	case "seeders":
 		if strings.ToLower(orderBy) == "asc" {
-			sortDesc(SortBySeeders{Items: items})
+			sortDesc(SortBySeeders{items})
 			break
 		}
 
-		sort.Sort(SortBySeeders{Items: items})
+		sortAsc(SortBySeeders{items})
 	case "leechers":
 		if strings.ToLower(orderBy) == "asc" {
-			sortDesc(SortByLeechers{Items: items})
+			sortDesc(SortByLeechers{items})
 			break
 		}
 
-		sort.Sort(SortByLeechers{Items: items})
+		sortAsc(SortByLeechers{items})
 	case "downloads":
 		if strings.ToLower(orderBy) == "asc" {
-			sortDesc(SortByDownloads{Items: items})
+			sortDesc(SortByDownloads{items})
 			break
 		}
 
-		sort.Sort(SortByDownloads{Items: items})
+		sortAsc(SortByDownloads{items})
 	case "date":
 		if strings.ToLower(orderBy) == "asc" {
-			sortDesc(SortByDate{Items: items})
+			sortDesc(SortByDate{items})
 			break
 		}
 
-		sort.Sort(SortByDate{Items: items})
+		sortAsc(SortByDate{items})
 	}
+}
+
+func sortAsc(items sort.Interface) {
+	sort.Sort(items)
 }
 
 func sortDesc(items sort.Interface) {

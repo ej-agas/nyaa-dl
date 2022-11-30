@@ -45,7 +45,7 @@ func run(cmd *cobra.Command, args []string) {
 	renderView(items)
 }
 
-func renderView(items domain.Items) {
+func renderView(items domain.ItemCollection) {
 	itemsCount := len(items.Items)
 
 	tw := table.NewWriter()
@@ -67,7 +67,7 @@ func renderView(items domain.Items) {
 
 		tw.AppendRow(
 			table.Row{
-				item.Link,
+				item.Id(),
 				text.FgGreen.Sprint(item.Title),
 				item.Size,
 				text.FgHiGreen.Sprint(item.Seeders),

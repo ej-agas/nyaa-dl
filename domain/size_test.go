@@ -20,37 +20,37 @@ func TestNewSizeFromString(t *testing.T) {
 			expectedErr:   "",
 		},
 		{
-			testName:      "KiB",
+			testName:      "Kibibyte (KiB)",
 			input:         "1.2 KiB",
 			expectedBytes: 1228.8,
 			expectedErr:   "",
 		},
 		{
-			testName:      "MiB",
+			testName:      "Mebibyte (MiB)",
 			input:         "256.42 MiB",
 			expectedBytes: 268_875_857.92,
 			expectedErr:   "",
 		},
 		{
-			testName:      "GiB",
+			testName:      "Gibibyte (GiB)",
 			input:         "1014.24 GiB",
 			expectedBytes: 1_089_031_907_573.76,
 			expectedErr:   "",
 		},
 		{
-			testName:      "TiB",
+			testName:      "Tebibyte (TiB)",
 			input:         "421.24 TiB",
 			expectedBytes: 463_158_278_084_362.25,
 			expectedErr:   "",
 		},
 		{
-			testName:      "PiB",
+			testName:      "Pebibyte (PiB)",
 			input:         "1021.24 PiB",
 			expectedBytes: 1_149_814_020_863_961_344,
 			expectedErr:   "",
 		},
 		{
-			testName:      "EiB",
+			testName:      "Exbibyte (EiB)",
 			input:         "2047.42 EiB",
 			expectedBytes: 2_360_514_546_962_150_719_488,
 			expectedErr:   "",
@@ -64,13 +64,15 @@ func TestNewSizeFromString(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		size, err := ConvertToBytes(scenario.input)
+		t.Run(scenario.testName, func(t *testing.T) {
+			size, err := ConvertToBytes(scenario.input)
 
-		if scenario.expectedErr != "" {
-			assert.Contains(t, err.Error(), scenario.expectedErr)
-			continue
-		}
+			if scenario.expectedErr != "" {
+				assert.Contains(t, err.Error(), scenario.expectedErr)
+				return
+			}
 
-		assert.Equal(t, scenario.expectedBytes, size)
+			assert.Equal(t, scenario.expectedBytes, size)
+		})
 	}
 }

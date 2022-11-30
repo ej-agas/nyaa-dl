@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"regexp"
 	"time"
 )
 
@@ -33,4 +34,15 @@ func (i *item) PublishDateLocalTz() string {
 
 func (i *item) SizeInBytes() (float64, error) {
 	return ConvertToBytes(i.Size)
+}
+
+func (i item) Id() string {
+	r := regexp.MustCompile(`\d+`)
+	results := r.FindAllString(i.Link, -1)
+
+	if len(results) == 0 {
+		return ""
+	}
+
+	return results[0]
 }
